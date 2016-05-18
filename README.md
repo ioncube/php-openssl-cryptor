@@ -1,7 +1,9 @@
-# php-openssl-cryptor
+php-openssl-cryptor
+===================
 
-This is a simple class demonstrating use of the basic openssl encrypt/decrypt 
-routines in PHP.
+Description
+-----------
+Simple to use class for encrypting/decrypting using the PHP Openssl library. 
 
 The Cryptor class supports arbitrary encryption and key hashing algorithms, along
 with raw, base64 and hex encoding of the encrypted data. Static convenience methods
