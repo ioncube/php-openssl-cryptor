@@ -12,3 +12,5 @@ echo "'$data' (" . strlen($data) . ") => '$encrypted'\n\n";
 $decrypted = Cryptor::Decrypt($encrypted, $key);
 
 echo "'$encrypted' => '$decrypted' (" . strlen($decrypted) . ")\n";
+
+?>
