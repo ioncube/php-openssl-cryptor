@@ -182,3 +182,5 @@ class Cryptor
         return $c->decryptString($in, $key, $fmt);
     }
 }
+
+?>
