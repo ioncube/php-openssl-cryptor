@@ -76,7 +76,7 @@ class Cryptor
         // Build an initialisation vector
         $iv = openssl_random_pseudo_bytes($this->iv_num_bytes, $isStrongCrypto);
         if (!$isStrongCrypto) {
-            throw new \Exception("Not a strong key");
+            throw new \Exception("Cryptor::encryptString() - Not a strong key");
         }
 
         // Hash the key
