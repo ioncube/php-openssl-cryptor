@@ -87,8 +87,15 @@ class Cryptor
 
         // Build an initialisation vector
         $iv = openssl_random_pseudo_bytes($this->iv_num_bytes, $isStrongCrypto);
-        if (!$isStrongCrypto) {
+
+        // key is not strong enough
+        if ($isStrongCrypto === false) {
             throw new UnexpectedResultException('Not a strong key');
+        }
+
+        // failure during initialisation
+        if ($iv === false) {
+            throw new UnexpectedResultException('Failure while initializing the pseudo-random string of bytes');
         }
 
         // Hash the key
