@@ -1,6 +1,6 @@
 <?php
 
-use ioncube\phpOpensslCryptor\Cryptor;
+use OpensslCryptor\Cryptor;
 
 $data = 'Good things come in small packages.';
 $key = '9901:io=[<>602vV03&Whb>9J&M~Oq';
