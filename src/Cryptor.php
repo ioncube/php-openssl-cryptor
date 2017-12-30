@@ -57,12 +57,12 @@ class Cryptor
 
         if (!in_array($cipher_algo, openssl_get_cipher_methods(true), false))
         {
-            throw new UnknownAlgoException("Cryptor:: - unknown cipher algo {$cipher_algo}");
+            throw new UnknownAlgoException("Unknown cipher algo {$cipher_algo}");
         }
 
         if (!in_array($hash_algo, openssl_get_md_methods(true), false))
         {
-            throw new UnknownAlgoException("Cryptor:: - unknown hash algo {$hash_algo}");
+            throw new UnknownAlgoException("Unknown hash algo {$hash_algo}");
         }
 
         $this->iv_num_bytes = openssl_cipher_iv_length($cipher_algo);
