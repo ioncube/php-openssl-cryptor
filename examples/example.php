@@ -1,5 +1,7 @@
 <?php
 
+require __DIR__ . '../vendor/autoload.php';
+
 use OpensslCryptor\Cryptor;
 
 $data = 'Good things come in small packages.';

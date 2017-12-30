@@ -55,12 +55,12 @@ class Cryptor
         $this->hash_algo = $hash_algo;
         $this->format = $fmt;
 
-        if (!in_array($cipher_algo, openssl_get_cipher_methods(true)))
+        if (!in_array($cipher_algo, openssl_get_cipher_methods(true), false))
         {
             throw new UnknownAlgoException("Cryptor:: - unknown cipher algo {$cipher_algo}");
         }
 
-        if (!in_array($hash_algo, openssl_get_md_methods(true)))
+        if (!in_array($hash_algo, openssl_get_md_methods(true), false))
         {
             throw new UnknownAlgoException("Cryptor:: - unknown hash algo {$hash_algo}");
         }
@@ -88,7 +88,7 @@ class Cryptor
         // Build an initialisation vector
         $iv = openssl_random_pseudo_bytes($this->iv_num_bytes, $isStrongCrypto);
         if (!$isStrongCrypto) {
-            throw new UnexpectedResultException("Not a strong key");
+            throw new UnexpectedResultException('Not a strong key');
         }
 
         // Hash the key
@@ -107,11 +107,11 @@ class Cryptor
         $res = $iv . $encrypted;
 
         // and format the result if required.
-        if ($fmt == Cryptor::FORMAT_B64)
+        if ($fmt === self::FORMAT_B64)
         {
             $res = base64_encode($res);
         }
-        else if ($fmt == Cryptor::FORMAT_HEX)
+        else if ($fmt === self::FORMAT_HEX)
         {
             $res = unpack('H*', $res)[1];
         }
@@ -139,11 +139,11 @@ class Cryptor
         $raw = $in;
 
         // Restore the encrypted data if encoded
-        if ($fmt == Cryptor::FORMAT_B64)
+        if ($fmt === self::FORMAT_B64)
         {
             $raw = base64_decode($in);
         }
-        else if ($fmt == Cryptor::FORMAT_HEX)
+        else if ($fmt === self::FORMAT_HEX)
         {
             $raw = pack('H*', $in);
         }
