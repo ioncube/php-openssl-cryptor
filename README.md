@@ -18,7 +18,7 @@ associated data can be retrieved.
 Require this library through composer:
 
 ```
-composer require pensiero/php-openssl-cryptor
+composer require ioncube/php-openssl-cryptor
 ```
 
 

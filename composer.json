@@ -1,5 +1,5 @@
 {
-    "name": "pensiero/php-openssl-cryptor",
+    "name": "ioncube/php-openssl-cryptor",
     "description": "Simple to use class for encrypting/decrypting using the PHP Openssl library.",
     "type": "library",
     "license": "MIT",
