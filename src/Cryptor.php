@@ -25,6 +25,10 @@
 
 namespace OpensslCryptor;
 
+use OpensslCryptor\Exception\ProcessException;
+use OpensslCryptor\Exception\UnexpectedResultException;
+use OpensslCryptor\Exception\UnknownAlgoException;
+
 class Cryptor
 {
     private $cipher_algo;
@@ -38,9 +42,12 @@ class Cryptor
 
     /**
      * Construct a Cryptor, using aes256 encryption, sha256 key hashing and base64 encoding.
+     *
      * @param string $cipher_algo The cipher algorithm.
      * @param string $hash_algo   Key hashing algorithm.
-     * @param [type] $fmt         Format of the encrypted data.
+     * @param int $fmt            Format of the encrypted data.
+     *
+     * @throws \Exception
      */
     public function __construct($cipher_algo = 'aes-256-ctr', $hash_algo = 'sha256', $fmt = Cryptor::FORMAT_B64)
     {
@@ -50,12 +57,12 @@ class Cryptor
 
         if (!in_array($cipher_algo, openssl_get_cipher_methods(true)))
         {
-            throw new \Exception("Cryptor:: - unknown cipher algo {$cipher_algo}");
+            throw new UnknownAlgoException("Cryptor:: - unknown cipher algo {$cipher_algo}");
         }
 
         if (!in_array($hash_algo, openssl_get_md_methods(true)))
         {
-            throw new \Exception("Cryptor:: - unknown hash algo {$hash_algo}");
+            throw new UnknownAlgoException("Cryptor:: - unknown hash algo {$hash_algo}");
         }
 
         $this->iv_num_bytes = openssl_cipher_iv_length($cipher_algo);
@@ -63,10 +70,13 @@ class Cryptor
 
     /**
      * Encrypt a string.
+     *
      * @param  string $in  String to encrypt.
      * @param  string $key Encryption key.
-     * @param  int $fmt Optional override for the output encoding. One of FORMAT_RAW, FORMAT_B64 or FORMAT_HEX.
+     * @param  int    $fmt Optional override for the output encoding. One of FORMAT_RAW, FORMAT_B64 or FORMAT_HEX.
+     *
      * @return string      The encrypted string.
+     * @throws \Exception
      */
     public function encryptString($in, $key, $fmt = null)
     {
@@ -78,7 +88,7 @@ class Cryptor
         // Build an initialisation vector
         $iv = openssl_random_pseudo_bytes($this->iv_num_bytes, $isStrongCrypto);
         if (!$isStrongCrypto) {
-            throw new \Exception("Cryptor::encryptString() - Not a strong key");
+            throw new UnexpectedResultException("Not a strong key");
         }
 
         // Hash the key
@@ -90,7 +100,7 @@ class Cryptor
 
         if ($encrypted === false)
         {
-            throw new \Exception('Cryptor::encryptString() - Encryption failed: ' . openssl_error_string());
+            throw new ProcessException('Encryption failed: ' . openssl_error_string());
         }
 
         // The result comprises the IV and encrypted data
@@ -111,10 +121,13 @@ class Cryptor
 
     /**
      * Decrypt a string.
+     *
      * @param  string $in  String to decrypt.
      * @param  string $key Decryption key.
-     * @param  int $fmt Optional override for the input encoding. One of FORMAT_RAW, FORMAT_B64 or FORMAT_HEX.
+     * @param  int    $fmt Optional override for the input encoding. One of FORMAT_RAW, FORMAT_B64 or FORMAT_HEX.
+     *
      * @return string      The decrypted string.
+     * @throws \Exception
      */
     public function decryptString($in, $key, $fmt = null)
     {
@@ -138,8 +151,7 @@ class Cryptor
         // and do an integrity check on the size.
         if (strlen($raw) < $this->iv_num_bytes)
         {
-            throw new \Exception('Cryptor::decryptString() - ' .
-                'data length ' . strlen($raw) . " is less than iv length {$this->iv_num_bytes}");
+            throw new UnexpectedResultException('Data length ' . strlen($raw) . " is less than iv length {$this->iv_num_bytes}");
         }
 
         // Extract the initialisation vector and encrypted data
@@ -155,7 +167,7 @@ class Cryptor
 
         if ($res === false)
         {
-            throw new \Exception('Cryptor::decryptString - decryption failed: ' . openssl_error_string());
+            throw new ProcessException('Decryption failed: ' . openssl_error_string());
         }
 
         return $res;
@@ -163,10 +175,13 @@ class Cryptor
 
     /**
      * Static convenience method for encrypting.
+     *
      * @param  string $in  String to encrypt.
      * @param  string $key Encryption key.
-     * @param  int $fmt Optional override for the output encoding. One of FORMAT_RAW, FORMAT_B64 or FORMAT_HEX.
+     * @param  int    $fmt Optional override for the output encoding. One of FORMAT_RAW, FORMAT_B64 or FORMAT_HEX.
+     *
      * @return string      The encrypted string.
+     * @throws \Exception
      */
     public static function Encrypt($in, $key, $fmt = null)
     {
@@ -176,10 +191,13 @@ class Cryptor
 
     /**
      * Static convenience method for decrypting.
+     *
      * @param  string $in  String to decrypt.
      * @param  string $key Decryption key.
-     * @param  int $fmt Optional override for the input encoding. One of FORMAT_RAW, FORMAT_B64 or FORMAT_HEX.
+     * @param  int    $fmt Optional override for the input encoding. One of FORMAT_RAW, FORMAT_B64 or FORMAT_HEX.
+     *
      * @return string      The decrypted string.
+     * @throws \Exception
      */
     public static function Decrypt($in, $key, $fmt = null)
     {
